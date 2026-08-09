@@ -657,6 +657,25 @@ p > *::selection {
   border-left: 1px solid var(--hover);
 }
 
+/* an invisible, finger-sized hit surface over the collapse chevron's gutter, so
+   a tap near the tiny chevron still lands on the item (which toggles it) instead
+   of missing or starting a text selection. matches the 40px zone the click
+   handler checks (isClickWithinBounds). */
+.outline-list > li.nested::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.outline-list[dir="rtl"] > li.nested::after {
+  left: unset;
+  right: -40px;
+}
+
 /* IMAGE */
 
 .image-view-content-wrap.ProseMirror-selectednode .resizer::before {
