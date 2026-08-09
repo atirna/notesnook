@@ -823,6 +823,10 @@ p > *::selection {
   position: absolute;
   top: calc((1lh - 18px) / 2);
   right: 0px;
+  /* the callout title is an h1-h6, so reset the heading chevron's negative
+     end-margin — on this absolutely-positioned chevron it would shift it out
+     of the callout instead of just tightening inline advance */
+  margin: 0;
   cursor: pointer;
   content: "";
   background-size: 18px;
@@ -843,6 +847,25 @@ p > *::selection {
 .ProseMirror div.callout > :first-child[dir="rtl"]::after {
   right: unset;
   left: 0px;
+}
+
+/* an invisible, finger-sized hit surface over the collapse chevron so a tap in
+   the corner reliably toggles the callout instead of selecting the title text.
+   matches the 40px zone the click handler checks (isClickWithinBounds). */
+.ProseMirror div.callout > :first-child::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.ProseMirror div.callout > :first-child[dir="rtl"]::before {
+  right: unset;
+  left: 0;
 }
 
 .ProseMirror div.callout.collapsed > :first-child::after  {
@@ -934,13 +957,18 @@ del.diffdel {
   cursor: pointer;
   content: "";
   background-size: var(--icon-size, 18px);
-  width: var(--icon-size, 18px);
+  /* the box is finger-sized so it's easy to tap, while the icon itself stays
+     --icon-size (mask-size, centered) — a hidden touch area, not a bigger icon.
+     the negative end-margin keeps the inline advance at the old icon width so
+     long headings wrap exactly as before instead of pushing a blank line. */
+  width: 40px;
   height: var(--icon-size, 18px);
+  margin-inline-end: calc(var(--icon-size, 18px) - 40px);
 
   background-color: var(--icon);
   mask: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiM4ODg4ODgiIGQ9Ik03LjQxIDguNThMMTIgMTMuMTdsNC41OS00LjU5TDE4IDEwbC02IDZsLTYtNmwxLjQxLTEuNDJaIi8+PC9zdmc+)
     no-repeat 50% 50%;
-  mask-size: cover;
+  mask-size: var(--icon-size, 18px);
 
   transform: rotate(0);
   transition: transform 250ms ease, opacity 200ms ease;
